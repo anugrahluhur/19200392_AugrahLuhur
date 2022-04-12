@@ -1,0 +1,83 @@
+<?php
+
+class ModelBuku extends CI_Model
+{
+    //manajemen buku
+    public function getBuku()
+    {
+        return $this->db->get('buku');
+    }
+
+    public function bukuWhere($where)
+    {
+        return $this->db->get_where('buku', $where);
+    }
+
+    public function simpanBuku($data = null)
+    {
+        $this->db->insert('buku', $data);
+    }
+
+    public function updateBuku($data, $where)
+    {
+        $this->db->set('judul_buku', $data['judul_buku']);
+        $this->db->set('id_kategori', $data['id_kategori']);
+        $this->db->set('pengarang', $data['pengarang']);
+        $this->db->set('penerbit', $data['penerbit']);
+        $this->db->set('tahun_terbit', $data['tahun_terbit']);
+        $this->db->set('isbn', $data['isbn']);
+        $this->db->set('stok', $data['stok']);
+        $this->db->where('id', $where);
+        $this->db->update('buku');
+    }
+
+    public function hapusBuku($where = null)
+    {
+        $this->db->delete('buku', $where);
+    }
+
+    public function total($field, $where)
+    {
+        $this->db->select_sum($field);
+        if (!empty($where) && count($where) > 0) {
+            $this->db->where($where);
+        }
+        $this->db->from('buku');
+        return $this->db->get()->row($field);
+    }
+
+    //manajemen kategori
+    public function getKategori()
+    {
+        return $this->db->get('kategori');
+    }
+
+    public function kategoriWhere($where)
+    {
+        return $this->db->get_where('kategori', $where);
+    }
+
+    public function simpanKategori($data = null)
+    {
+        $this->db->insert('kategori', $data);
+    }
+
+    public function hapusKategori($where = null)
+    {
+        $this->db->delete('kategori', $where);
+    }
+
+    public function updateKategori($where = null, $data = null)
+    {
+        $this->db->update('kategori', $data, $where);
+    }
+
+    //join
+    public function joinKategoriBuku($where)
+    {
+        $this->db->from('buku');
+        $this->db->join('kategori', 'kategori.id_kategori = buku.id_kategori');
+        $this->db->where($where);
+        return $this->db->get();
+    }
+}
